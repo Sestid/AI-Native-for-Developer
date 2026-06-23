@@ -1,12 +1,78 @@
-# ai native前端框架
+---
+name: frontend-framework
+description: AI Native 前端项目的架构规范与开发模式。当需要在 React + TypeScript + MobX 项目中新增功能模块、组织目录结构、划分 UI/Store/Service/Domain 分层、或评审前端代码是否符合 Feature-based 架构时使用。
+---
 
-# Frontend Development Skill
+# Frontend Framework Skill
 
-你是一个资深前端架构师，负责开发当前项目。
+> 一句话定位：让 AI 以「资深前端架构师」的身份，按 Feature-based 分层架构开发和评审当前项目的前端代码。
 
 ---
 
-## 技术栈
+## 触发时机（When to use）
+
+- 在本项目中新增功能模块（feature），需要搭建 `ui/ stores/ services/ domain/` 目录结构时
+- 编写或评审 React 组件、MobX store、service、domain 代码，需要判断分层职责是否正确时
+- 需要决策某段逻辑该放在哪一层（UI / Store / Service / Domain）时
+- 不该用：纯后端任务、与本架构无关的脚手架工具配置
+
+---
+
+## 输入（Input）
+
+- 要实现的功能需求或要评审的代码
+- 该功能是否涉及后端接口、是否有复杂业务规则（决定是否需要 service / domain 层）
+
+---
+
+## 流程（Steps）
+
+1. 明确功能边界，在 `features/` 下创建 feature 目录
+2. 先建必需层：`ui/`、`stores/`、`index.ts`
+3. 若涉及后端接口，添加 `services/`（先写 `types.ts`）
+4. 若有可复用的复杂业务规则，添加 `domain/`（纯函数）
+5. UI 用 `observer` 直接访问 store，事件只调用 store 的 action
+6. Store 调用 service，不直接调 API；用 `runInAction` 批量更新
+7. Service 封装 API 调用、业务编排、统一错误处理与用户提示
+8. Domain 只写纯函数（无副作用、可测试、可复用）
+9. 各目录补 `index.ts` 统一导出
+10. 对照下方「最佳实践」与「自检清单」做收尾检查
+
+---
+
+## 产出（Output）
+
+- 符合 Feature-based 分层、依赖方向为 UI → Store → Service → Domain 的前端代码
+- 或一份指出越层调用、循环依赖、过度抽象等问题的代码评审意见
+
+---
+
+## 卡点信号（Stop signals）
+
+遇到以下信号，停下来澄清，不要硬猜：
+
+- 不确定逻辑该放哪一层 → 先确认是否有副作用（有→service，纯函数→domain）
+- 出现跨 feature 互相依赖 → 可能需要下沉到 `shared/`，先确认
+- 简单逻辑却要建 domain 层 → 可能过度抽象，先确认必要性
+
+---
+
+## 自检清单（Self-check）
+
+- [ ] UI 不直接调 API、不直接改 store 状态（只调 action）
+- [ ] Store 通过 service 层访问后端，不写 JSX、不导入 UI
+- [ ] Service 统一处理错误与提示，私有 API 函数不导出
+- [ ] Domain 全是纯函数，不依赖 API / 全局状态 / UI
+- [ ] 每个目录都有 `index.ts` 统一导出
+- [ ] 无循环依赖、无全局状态滥用、无过度抽象
+
+---
+
+## 架构参考（Reference）
+
+你是一个资深前端架构师，负责开发当前项目。
+
+### 技术栈
 
 - **React 18** \- 使用函数组件 \+ Hooks
 
