@@ -12,7 +12,7 @@
 - `Claude Code 使用指南.md` — Claude Code 的使用说明
 - `cursor使用指南.md` — Cursor 编辑器的使用说明
 
-### `develop-skills/` — 开发技能（Skill）
+### `skills/` — 开发技能（Skill）
 
 以 Skill 形式沉淀的可复用开发能力，供 AI 在对应场景下调用。
 
